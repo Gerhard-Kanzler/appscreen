@@ -3527,3 +3527,428 @@ input[type="range"]::-webkit-slider-thumb {
     font-size: 18px;
     line-height: 1;
 }
+/* ─── AI Background Generator ───────────────────────────────────────────── */
+
+.bg-ai-generate-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 8px;
+    padding: 9px 14px;
+    background: linear-gradient(135deg, rgba(10,132,255,0.12) 0%, rgba(120,60,220,0.12) 100%);
+    border: 1px solid rgba(120,60,220,0.3);
+    border-radius: 8px;
+    color: #a78bfa;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bg-ai-generate-btn:hover {
+    background: linear-gradient(135deg, rgba(10,132,255,0.22) 0%, rgba(120,60,220,0.22) 100%);
+    border-color: rgba(120,60,220,0.6);
+    color: #c4b5fd;
+}
+
+.bg-generator-modal-inner {
+    max-width: 560px;
+    width: 94vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.bg-generator-modal-inner .modal-title,
+.bg-generator-modal-inner .modal-message,
+.bg-generator-modal-inner .modal-icon {
+    text-align: center;
+}
+
+.bg-generator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.bg-gen-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 160px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.bg-gen-card-ready:hover {
+    border-color: var(--accent);
+    transform: scale(1.02);
+}
+
+.bg-gen-placeholder,
+.bg-gen-spinner-wrap,
+.bg-gen-error-wrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+}
+
+.bg-gen-placeholder-label,
+.bg-gen-spinner-label,
+.bg-gen-error-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+}
+
+.bg-gen-placeholder-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+}
+
+.bg-gen-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255,255,255,0.2);
+    border-top-color: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    animation: bg-gen-spin 0.8s linear infinite;
+}
+
+@keyframes bg-gen-spin {
+    to { transform: rotate(360deg); }
+}
+
+.bg-gen-error-msg {
+    font-size: 11px;
+    color: rgba(255,80,80,0.85);
+}
+
+.bg-gen-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bg-gen-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 8px 10px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.72));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.18s;
+}
+
+.bg-gen-card-ready:hover .bg-gen-card-overlay {
+    opacity: 1;
+}
+
+.bg-gen-card-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.bg-gen-apply-btn {
+    padding: 4px 10px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.bg-gen-apply-btn:hover {
+    background: var(--accent-hover);
+}
+
+.bg-gen-prompt-row {
+    margin-top: 14px;
+}
+
+.bg-gen-prompt-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 12px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.bg-gen-prompt-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.bg-gen-prompt-input:focus {
+    outline: none;
+    border-color: rgba(120, 60, 220, 0.5);
+}
+
+.bg-gen-pattern-row {
+    margin-top: 14px;
+}
+
+.bg-gen-pattern-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.bg-gen-pattern-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.bg-gen-pattern-chip {
+    padding: 6px 11px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.bg-gen-pattern-chip:hover {
+    border-color: rgba(120, 60, 220, 0.5);
+    color: var(--text-primary);
+}
+
+.bg-gen-pattern-chip.active {
+    background: rgba(120, 60, 220, 0.18);
+    border-color: rgba(120, 60, 220, 0.7);
+    color: #c4b5fd;
+}
+
+.bg-gen-card-wide {
+    grid-column: 1 / -1;
+    height: 110px;
+}
+
+.bg-gen-card-wide .bg-gen-img {
+    object-position: center 40%;
+}
+
+/* Hover preview — shows the generated image at correct portrait aspect ratio */
+.bg-gen-hover-preview {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 280px;
+    height: 420px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.08);
+    background: var(--bg-secondary);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 2000;
+    /* Default: side-positioned to the right of the modal */
+    transform: translate(calc(280px + 30px), -50%) scale(0.94);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+
+.bg-gen-hover-preview.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(calc(280px + 30px), -50%) scale(1);
+}
+
+.bg-gen-hover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bg-gen-hover-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 14px 16px 12px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Narrow screens: fall back to centered over the modal */
+@media (max-width: 980px) {
+    .bg-gen-hover-preview {
+        width: 220px;
+        height: 330px;
+        transform: translate(-50%, -50%) scale(0.94);
+    }
+    .bg-gen-hover-preview.visible {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Auto Design button — slight purple accent to flag it as a power feature */
+.auto-design-btn svg {
+    color: #a78bfa;
+}
+.auto-design-btn:hover svg {
+    color: #c4b5fd;
+}
+
+/* ─── Buy Me A Coffee promoter toast ─────────────────────────────────────── */
+
+.bmc-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 320px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px 16px 14px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45),
+                0 0 0 1px rgba(255, 221, 0, 0.06);
+    z-index: 2500;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    pointer-events: none;
+}
+
+.bmc-toast.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.bmc-close {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+}
+.bmc-close:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+}
+
+.bmc-toast-body {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-right: 16px;
+}
+
+.bmc-icon {
+    font-size: 26px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.bmc-text { flex: 1; min-width: 0; }
+
+.bmc-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+}
+
+.bmc-subtitle {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+.bmc-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+}
+
+.bmc-cta {
+    display: block;
+    text-align: center;
+    background: #ffdd00;
+    color: #1d1d1f;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: background 0.15s, transform 0.1s;
+}
+.bmc-cta:hover {
+    background: #ffe94a;
+    transform: translateY(-1px);
+}
+
+.bmc-dont-show {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 4px;
+    align-self: center;
+    text-decoration: underline;
+    transition: color 0.15s;
+}
+.bmc-dont-show:hover {
+    color: var(--text-primary);
+}
+
+@media (max-width: 600px) {
+    .bmc-toast {
+        bottom: 12px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+    }
+}

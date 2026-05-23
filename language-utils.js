@@ -1,5 +1,6 @@
 // Language utilities for localized screenshot management
 // This file handles language detection, localized image management, and translation dialogs
+// Copyright (c) 2024 YUZUHub — MIT (see LICENSE)
 
 // Current screenshot index for translations modal
 let currentTranslationsIndex = null;

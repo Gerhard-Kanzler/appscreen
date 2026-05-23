@@ -1,5 +1,6 @@
 // Magical Titles - AI-powered title generation using vision APIs
 // Analyzes app screenshots and generates marketing headlines + subheadlines
+// Copyright (c) 2024 YUZUHub, (c) 2026 Gerhard Kanzler — MIT (see LICENSE)
 
 // Track if the tooltip has been shown this session
 let magicalTitlesTooltipShown = false;
@@ -88,6 +89,40 @@ function parseDataUrl(dataUrl) {
         mimeType: match[1],
         base64: match[2]
     };
+}
+
+/**
+ * Compress an image before sending to AI to reduce payload size.
+ * Scales down to maxDimension on the longest side and converts to JPEG.
+ * @param {string} dataUrl - Original image data URL
+ * @param {number} maxDimension - Max px on longest side (default 1024)
+ * @param {number} quality - JPEG quality 0–1 (default 0.82)
+ * @returns {Promise<{mimeType: string, base64: string}>}
+ */
+function compressImageForAI(dataUrl, maxDimension = 1024, quality = 0.82) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDimension || height > maxDimension) {
+                if (width >= height) {
+                    height = Math.round(height * maxDimension / width);
+                    width = maxDimension;
+                } else {
+                    width = Math.round(width * maxDimension / height);
+                    height = maxDimension;
+                }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL('image/jpeg', quality);
+            resolve(parseDataUrl(compressed));
+        };
+        img.onerror = reject;
+        img.src = dataUrl;
+    });
 }
 
 /**
@@ -297,15 +332,13 @@ async function generateMagicalTitles() {
     const sourceLang = langSelect.value || state.projectLanguages[0] || 'en';
     const langName = languageNames[sourceLang] || 'English';
 
-    // Collect images from all screenshots
+    // Collect images from all screenshots, compressed to reduce API payload
     const images = [];
     for (const screenshot of state.screenshots) {
         const dataUrl = getScreenshotDataUrl(screenshot, sourceLang);
         if (dataUrl) {
-            const parsed = parseDataUrl(dataUrl);
-            if (parsed) {
-                images.push(parsed);
-            }
+            const compressed = await compressImageForAI(dataUrl);
+            if (compressed) images.push(compressed);
         }
     }
 

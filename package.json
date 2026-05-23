@@ -7,13 +7,20 @@
     "email": "hello@yuzuhub.com",
     "url": "https://yuzuhub.com"
   },
+  "contributors": [
+    {
+      "name": "Gerhard Kanzler",
+      "url": "https://github.com/gerhard-kanzler"
+    }
+  ],
   "license": "MIT",
-  "homepage": "https://yuzu-hub.github.io/appscreen/",
+  "homepage": "https://gerhard-kanzler.github.io/appscreen/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YUZU-Hub/appscreen"
+    "url": "https://github.com/gerhard-kanzler/appscreen"
   },
   "scripts": {
+    "dev": "node dev-server.js",
     "serve": "python3 -m http.server 8000",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",

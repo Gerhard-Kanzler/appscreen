@@ -1,3 +1,11 @@
+// App Store Screenshot Generator — main application logic.
+// State management, canvas rendering pipeline, project & screenshot management,
+// import/export, AI translation orchestration, and UI event wiring.
+//
+// Copyright (c) 2024 YUZUHub
+// Copyright (c) 2026 Gerhard Kanzler (fork maintainer, additional features)
+// MIT licensed — see LICENSE for full attribution.
+
 // State management
 const state = {
     screenshots: [],
@@ -1242,6 +1250,10 @@ const deviceDimensions = {
     'iphone-5.5': { width: 1242, height: 2208 },
     'ipad-12.9': { width: 2048, height: 2732 },
     'ipad-11': { width: 1668, height: 2388 },
+    'watch-ultra': { width: 410, height: 502 },
+    'watch-s10-46': { width: 416, height: 496 },
+    'watch-s9-45': { width: 396, height: 484 },
+    'watch-se-44': { width: 368, height: 448 },
     'android-phone': { width: 1080, height: 1920 },
     'android-phone-hd': { width: 1440, height: 2560 },
     'android-tablet-7': { width: 1200, height: 1920 },
@@ -6051,10 +6063,13 @@ async function processDesktopImageFile(fileData) {
     return new Promise((resolve) => {
         const img = new Image();
         img.onload = async () => {
-            // Detect device type based on aspect ratio
+            // Detect device type based on aspect ratio.
+            // Watch ≈ 0.82 (near-square), iPad ≈ 0.75, iPhone ≈ 0.46.
             const ratio = img.width / img.height;
             let deviceType = 'iPhone';
-            if (ratio > 0.6) {
+            if (ratio > 0.78) {
+                deviceType = 'Watch';
+            } else if (ratio > 0.6) {
                 deviceType = 'iPad';
             }
 
@@ -8513,4 +8528,4 @@ function wireIconClicks(grid) {
 }
 
 // Initialize the app
-initSync();
+initSync();// test Fr. 22 Mai 2026 14:51:14 CEST

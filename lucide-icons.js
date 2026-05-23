@@ -1,4 +1,5 @@
 // Curated emoji data and Lucide icon name arrays for the Elements tab
+// Copyright (c) 2024 YUZUHub — MIT (see LICENSE)
 
 const EMOJI_DATA = {
     popular: [

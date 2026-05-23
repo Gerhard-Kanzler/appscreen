@@ -3,13 +3,15 @@
 A free, open-source tool for creating beautiful App Store screenshots with customizable backgrounds, text overlays, and 3D device mockups.
 
 
-**[Start using it now. Hosted on GitHub Pages](https://yuzu-hub.github.io/appscreen/)**
+**[Start using it now. Hosted on GitHub Pages](https://gerhard-kanzler.github.io/appscreen/)** · [☕ Support](https://buymeacoffee.com/gk.appscreen)
 
 ![App Store Screenshot Generator](img/screenshot-generator.png)
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-> 🍋 **Built by [YuzuHub](https://yuzuhub.com)** — We build smart AI products in Düsseldorf, Germany. Check out [yuzu.chat](https://yuzu.chat), [Eno](https://eno.yuzuhub.com), [VoltPlan](https://voltplan.app) and more.
+> 🔧 This is a maintained fork of [YUZU-Hub/appscreen](https://github.com/YUZU-Hub/appscreen) by [Gerhard Kanzler](https://github.com/gerhard-kanzler) with additional features: full AI auto-design, AI-generated backgrounds via gpt-image-2, Apple Watch output sizes, custom prompts with pattern overlays, and a zero-dependency dev server. All original work and attribution preserved below.
+
+> 🍋 **Originally built by [YuzuHub](https://yuzuhub.com)** — We build smart AI products in Düsseldorf, Germany. Check out [yuzu.chat](https://yuzu.chat), [Eno](https://eno.yuzuhub.com), [VoltPlan](https://voltplan.app) and more.
 
 ## Features
 
@@ -64,7 +66,7 @@ A free, open-source tool for creating beautiful App Store screenshots with custo
 
 ### Just Want to Use It?
 
-Visit **[yuzu-hub.github.io/appscreen](https://yuzu-hub.github.io/appscreen/)** to use the tool directly in your browser. No installation needed!
+Visit **[gerhard-kanzler.github.io/appscreen](https://gerhard-kanzler.github.io/appscreen/)** to use the tool directly in your browser. No installation needed!
 
 ---
 
@@ -202,6 +204,10 @@ MIT License - feel free to use, modify, and distribute.
 
 - **iPhone 15 Pro Max 3D Model** by [MajdyModels](https://sketchfab.com/majdymodels) - Licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
-## Author
+## Authors
 
-Proudly vibe coded by [Stefan](https://github.com/BlackMac) at [YuzuHub](https://yuzuhub.com/en) — building smart AI products from Düsseldorf, Germany.
+**Original** — Proudly vibe coded by [Stefan](https://github.com/BlackMac) at [YuzuHub](https://yuzuhub.com/en) — building smart AI products from Düsseldorf, Germany.
+
+**Fork maintainer** — [Gerhard Kanzler](https://github.com/gerhard-kanzler) — extending the project with AI auto-design, gpt-image-2 backgrounds, Apple Watch support, custom prompts, dev container, and more.
+
+If you find this tool useful, you can [buy me a coffee ☕](https://buymeacoffee.com/gk.appscreen) to support continued development.

@@ -1,5 +1,6 @@
 // LLM Provider Configuration
 // Centralized configuration for all AI translation providers and models
+// Copyright (c) 2024 YUZUHub, (c) 2026 Gerhard Kanzler — MIT (see LICENSE)
 
 const llmProviders = {
     anthropic: {
