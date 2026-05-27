@@ -89,14 +89,79 @@ function validateApiKeyFormat(provider, key) {
  * Generate HTML options for model select dropdown
  * @param {string} provider - Provider key
  * @param {string} selectedModel - Currently selected model ID (optional)
+ * @param {Array} modelsOverride - Optional list of {id, name} to use instead of the static config
  * @returns {string} - HTML string of option elements
  */
-function generateModelOptions(provider, selectedModel = null) {
+function generateModelOptions(provider, selectedModel = null, modelsOverride = null) {
     const config = llmProviders[provider];
     if (!config) return '';
 
     const selected = selectedModel || getSelectedModel(provider);
-    return config.models.map(model =>
+    const models = modelsOverride || config.models;
+    return models.map(model =>
         `<option value="${model.id}"${model.id === selected ? ' selected' : ''}>${model.name}</option>`
     ).join('\n');
+}
+
+/**
+ * Fetch available chat/text models from a provider's API.
+ * Filters to models suitable for text generation and returns [{id, name}].
+ * Throws on network / auth errors so callers can show status.
+ * @param {string} provider - Provider key (anthropic, openai, google)
+ * @param {string} apiKey - API key for the provider
+ * @returns {Promise<Array<{id: string, name: string}>>}
+ */
+async function fetchProviderModels(provider, apiKey) {
+    if (!apiKey) throw new Error('Missing API key');
+
+    if (provider === 'anthropic') {
+        const res = await fetch('https://api.anthropic.com/v1/models?limit=100', {
+            method: 'GET',
+            headers: {
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'anthropic-dangerous-direct-browser-access': 'true'
+            }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return (data.data || [])
+            .filter(m => typeof m.id === 'string' && m.id.startsWith('claude-'))
+            .map(m => ({ id: m.id, name: m.display_name || m.id }))
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    if (provider === 'openai') {
+        const res = await fetch('https://api.openai.com/v1/models', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const blocklist = ['instruct', 'embedding', 'embed', 'whisper', 'tts', 'dall-e', 'image', 'audio', 'realtime', 'transcribe', 'moderation', 'davinci', 'babbage', 'search'];
+        return (data.data || [])
+            .filter(m => typeof m.id === 'string' && m.id.startsWith('gpt-'))
+            .filter(m => !blocklist.some(term => m.id.toLowerCase().includes(term)))
+            .map(m => ({ id: m.id, name: m.id }))
+            .sort((a, b) => b.id.localeCompare(a.id));
+    }
+
+    if (provider === 'google') {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(apiKey)}&pageSize=200`, {
+            method: 'GET'
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return (data.models || [])
+            .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+            .filter(m => typeof m.name === 'string' && m.name.includes('gemini'))
+            .filter(m => !/embedding|aqa|imagen|vision-only/i.test(m.name))
+            .map(m => {
+                const id = m.name.replace(/^models\//, '');
+                return { id, name: m.displayName || id };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    throw new Error(`Unknown provider: ${provider}`);
 }

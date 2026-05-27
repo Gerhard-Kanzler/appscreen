@@ -4066,6 +4066,13 @@ function setupEventListeners() {
         });
     });
 
+    // Refresh-from-API buttons for model dropdowns
+    document.querySelectorAll('.settings-model-refresh').forEach(btn => {
+        btn.addEventListener('click', () => {
+            refreshProviderModels(btn.dataset.provider);
+        });
+    });
+
     document.getElementById('settings-modal').addEventListener('click', (e) => {
         if (e.target.id === 'settings-modal') {
             document.getElementById('settings-modal').classList.remove('visible');
@@ -5831,11 +5838,26 @@ function openSettingsModal() {
         // Populate and load saved model selection
         const modelSelect = document.getElementById(`settings-model-${provider}`);
         if (modelSelect) {
-            // Populate options from llm.js config
-            modelSelect.innerHTML = generateModelOptions(provider);
-            // Set saved value
+            // Prefer cached models fetched from the provider API
+            const cached = loadCachedProviderModels(provider);
+            modelSelect.innerHTML = generateModelOptions(provider, null, cached);
             const savedModel = localStorage.getItem(config.modelStorageKey) || config.defaultModel;
-            modelSelect.value = savedModel;
+            // Set saved value if it exists in current options, otherwise default
+            const exists = Array.from(modelSelect.options).some(o => o.value === savedModel);
+            modelSelect.value = exists ? savedModel : (modelSelect.options[0]?.value || '');
+        }
+
+        // Show "from API" indicator if we have a cached list
+        const statusEl = document.getElementById(`settings-model-status-${provider}`);
+        if (statusEl) {
+            const cached = loadCachedProviderModels(provider);
+            if (cached && cached.length) {
+                statusEl.textContent = `${cached.length} models loaded from API`;
+                statusEl.className = 'settings-model-status success';
+            } else {
+                statusEl.textContent = '';
+                statusEl.className = 'settings-model-status';
+            }
         }
     });
 
@@ -5902,6 +5924,69 @@ function saveSettings() {
         setTimeout(() => {
             document.getElementById('settings-modal').classList.remove('visible');
         }, 500);
+    }
+}
+
+function loadCachedProviderModels(provider) {
+    try {
+        const raw = localStorage.getItem(`${provider}ModelsCache`);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length ? parsed : null;
+    } catch {
+        return null;
+    }
+}
+
+async function refreshProviderModels(provider) {
+    const config = llmProviders[provider];
+    if (!config) return;
+
+    const btn = document.querySelector(`.settings-model-refresh[data-provider="${provider}"]`);
+    const statusEl = document.getElementById(`settings-model-status-${provider}`);
+    const modelSelect = document.getElementById(`settings-model-${provider}`);
+    const keyInput = document.getElementById(`settings-api-key-${provider}`);
+    if (!btn || !statusEl || !modelSelect || !keyInput) return;
+
+    // Prefer the value in the input field (may be unsaved), fall back to stored key
+    const apiKey = (keyInput.value || '').trim() || localStorage.getItem(config.storageKey) || '';
+    if (!apiKey) {
+        statusEl.textContent = 'Enter an API key first';
+        statusEl.className = 'settings-model-status error';
+        return;
+    }
+    if (!apiKey.startsWith(config.keyPrefix)) {
+        statusEl.textContent = `Invalid key format. Should start with ${config.keyPrefix}...`;
+        statusEl.className = 'settings-model-status error';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    statusEl.textContent = 'Loading models…';
+    statusEl.className = 'settings-model-status';
+
+    try {
+        const models = await fetchProviderModels(provider, apiKey);
+        if (!models.length) throw new Error('No compatible models returned');
+
+        localStorage.setItem(`${provider}ModelsCache`, JSON.stringify(models));
+
+        const currentValue = modelSelect.value;
+        modelSelect.innerHTML = generateModelOptions(provider, null, models);
+        const stillExists = Array.from(modelSelect.options).some(o => o.value === currentValue);
+        modelSelect.value = stillExists ? currentValue : models[0].id;
+
+        statusEl.textContent = `${models.length} models loaded from API`;
+        statusEl.className = 'settings-model-status success';
+    } catch (err) {
+        console.error(`[${provider}] model fetch failed:`, err);
+        const msg = /401|403/.test(err.message) ? 'Invalid API key' : `Failed: ${err.message}`;
+        statusEl.textContent = msg;
+        statusEl.className = 'settings-model-status error';
+    } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
     }
 }
 

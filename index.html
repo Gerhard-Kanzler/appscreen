@@ -1711,9 +1711,19 @@
                 <div class="settings-key-status" id="settings-key-status-anthropic"></div>
                 <div class="settings-model-group">
                     <label class="settings-model-label">Model</label>
-                    <select id="settings-model-anthropic" class="settings-model-select">
-                        <!-- Populated dynamically from llm.js -->
-                    </select>
+                    <div class="settings-model-row">
+                        <select id="settings-model-anthropic" class="settings-model-select">
+                            <!-- Populated dynamically from llm.js -->
+                        </select>
+                        <button type="button" class="settings-model-refresh" data-provider="anthropic" title="Load available models from API">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <polyline points="1 20 1 14 7 14"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="settings-model-status" id="settings-model-status-anthropic"></div>
                 </div>
                 <a href="https://console.anthropic.com/settings/keys" target="_blank" class="settings-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1742,9 +1752,19 @@
                 <div class="settings-key-status" id="settings-key-status-openai"></div>
                 <div class="settings-model-group">
                     <label class="settings-model-label">Model</label>
-                    <select id="settings-model-openai" class="settings-model-select">
-                        <!-- Populated dynamically from llm.js -->
-                    </select>
+                    <div class="settings-model-row">
+                        <select id="settings-model-openai" class="settings-model-select">
+                            <!-- Populated dynamically from llm.js -->
+                        </select>
+                        <button type="button" class="settings-model-refresh" data-provider="openai" title="Load available models from API">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <polyline points="1 20 1 14 7 14"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="settings-model-status" id="settings-model-status-openai"></div>
                 </div>
                 <a href="https://platform.openai.com/api-keys" target="_blank" class="settings-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1773,9 +1793,19 @@
                 <div class="settings-key-status" id="settings-key-status-google"></div>
                 <div class="settings-model-group">
                     <label class="settings-model-label">Model</label>
-                    <select id="settings-model-google" class="settings-model-select">
-                        <!-- Populated dynamically from llm.js -->
-                    </select>
+                    <div class="settings-model-row">
+                        <select id="settings-model-google" class="settings-model-select">
+                            <!-- Populated dynamically from llm.js -->
+                        </select>
+                        <button type="button" class="settings-model-refresh" data-provider="google" title="Load available models from API">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <polyline points="1 20 1 14 7 14"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="settings-model-status" id="settings-model-status-google"></div>
                 </div>
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="settings-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
