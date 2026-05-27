@@ -8243,6 +8243,10 @@ async function exportAllForLanguage(lang) {
     const zip = new JSZip();
     const total = state.screenshots.length;
 
+    const padWidth = Math.max(2, String(total).length);
+    const pad = n => String(n).padStart(padWidth, '0');
+    const ascLocale = getAppStoreLocale(lang);
+
     // Show progress
     const langName = languageNames[lang] || lang.toUpperCase();
     showExportProgress('Exporting...', `Preparing ${langName} screenshots`, 0);
@@ -8260,6 +8264,17 @@ async function exportAllForLanguage(lang) {
         s.text.currentSubheadlineLang = lang;
     });
 
+    const readmeLines = [
+        `App Store Connect locale: ${ascLocale}`,
+        `Project language: ${langName} (${lang})`,
+        `Device: ${state.outputDevice}`,
+        '',
+        'Drag the .png files of this folder into the App Store Connect screenshot uploader',
+        'for the matching locale. Files sort alphabetically — keep the numeric prefix.',
+        '',
+        'Order:'
+    ];
+
     for (let i = 0; i < state.screenshots.length; i++) {
         state.selectedIndex = i;
         updateCanvas();
@@ -8274,8 +8289,17 @@ async function exportAllForLanguage(lang) {
         const dataUrl = canvas.toDataURL('image/png');
         const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
 
-        zip.file(`screenshot-${i + 1}.png`, base64Data, { base64: true });
+        const filename = `${pad(i + 1)}.png`;
+        zip.file(filename, base64Data, { base64: true });
+
+        const text = state.screenshots[i].text || {};
+        const headline = (text.headlines && text.headlines[lang]) || text.headline || '';
+        const subheadline = (text.subheadlines && text.subheadlines[lang]) || text.subheadline || '';
+        const label = [headline, subheadline].filter(Boolean).join(' / ') || '(no text)';
+        readmeLines.push(`${filename} — ${label}`);
     }
+
+    zip.file('README.txt', readmeLines.join('\n') + '\n');
 
     // Restore original settings
     state.selectedIndex = originalIndex;
@@ -8295,7 +8319,7 @@ async function exportAllForLanguage(lang) {
     hideExportProgress();
 
     const link = document.createElement('a');
-    link.download = `screenshots_${state.outputDevice}_${lang}.zip`;
+    link.download = `screenshots_${state.outputDevice}_${ascLocale}.zip`;
     link.href = URL.createObjectURL(content);
     link.click();
     URL.revokeObjectURL(link.href);
@@ -8312,6 +8336,10 @@ async function exportAllLanguages() {
     const totalItems = totalLangs * totalScreenshots;
     let completedItems = 0;
 
+    // Width of zero-padded index (min 2, so 01..09; grows for huge sets)
+    const padWidth = Math.max(2, String(totalScreenshots).length);
+    const pad = n => String(n).padStart(padWidth, '0');
+
     // Show progress
     showExportProgress('Exporting...', 'Preparing all languages', 0);
 
@@ -8324,6 +8352,17 @@ async function exportAllLanguages() {
     for (let langIdx = 0; langIdx < state.projectLanguages.length; langIdx++) {
         const lang = state.projectLanguages[langIdx];
         const langName = languageNames[lang] || lang.toUpperCase();
+        const ascLocale = getAppStoreLocale(lang);
+        const readmeLines = [
+            `App Store Connect locale: ${ascLocale}`,
+            `Project language: ${langName} (${lang})`,
+            `Device: ${state.outputDevice}`,
+            '',
+            'Drag the .png files of this folder into the App Store Connect screenshot uploader',
+            'for the matching locale. Files sort alphabetically — keep the numeric prefix.',
+            '',
+            'Order:'
+        ];
 
         // Temporarily switch to this language (images and text)
         state.currentLanguage = lang;
@@ -8346,9 +8385,18 @@ async function exportAllLanguages() {
             const dataUrl = canvas.toDataURL('image/png');
             const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
 
-            // Use language code as folder name
-            zip.file(`${lang}/screenshot-${i + 1}.png`, base64Data, { base64: true });
+            const filename = `${pad(i + 1)}.png`;
+            zip.file(`${ascLocale}/${filename}`, base64Data, { base64: true });
+
+            // Collect headline/subheadline for this screenshot in this language
+            const text = state.screenshots[i].text || {};
+            const headline = (text.headlines && text.headlines[lang]) || text.headline || '';
+            const subheadline = (text.subheadlines && text.subheadlines[lang]) || text.subheadline || '';
+            const label = [headline, subheadline].filter(Boolean).join(' / ') || '(no text)';
+            readmeLines.push(`${filename} — ${label}`);
         }
+
+        zip.file(`${ascLocale}/README.txt`, readmeLines.join('\n') + '\n');
     }
 
     // Restore original settings

@@ -5,6 +5,42 @@
 // Current screenshot index for translations modal
 let currentTranslationsIndex = null;
 
+// Internal language code -> App Store Connect locale code.
+// Source: ASC supported locales list.
+const appStoreLocaleMap = {
+    'en': 'en-US',
+    'en-gb': 'en-GB',
+    'de': 'de-DE',
+    'fr': 'fr-FR',
+    'es': 'es-ES',
+    'it': 'it',
+    'pt': 'pt-PT',
+    'pt-br': 'pt-BR',
+    'nl': 'nl-NL',
+    'ru': 'ru',
+    'ja': 'ja',
+    'ko': 'ko',
+    'zh': 'zh-Hans',
+    'zh-tw': 'zh-Hant',
+    'ar': 'ar-SA',
+    'hi': 'hi',
+    'tr': 'tr',
+    'pl': 'pl',
+    'sv': 'sv',
+    'da': 'da',
+    'no': 'no',
+    'fi': 'fi',
+    'th': 'th',
+    'vi': 'vi',
+    'id': 'id',
+    'uk': 'uk'
+};
+
+function getAppStoreLocale(code) {
+    if (!code) return code;
+    return appStoreLocaleMap[code.toLowerCase()] || code;
+}
+
 /**
  * Extract the base filename without language suffix
  * e.g., "screenshot_de.png" -> "screenshot", "image-fr.png" -> "image"
