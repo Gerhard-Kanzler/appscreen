@@ -4022,6 +4022,12 @@ function setupEventListeners() {
         }
     });
 
+    // News page navigation + unread badge
+    document.getElementById('news-btn').addEventListener('click', () => {
+        window.location.href = 'news.html';
+    });
+    initNewsBadge();
+
     // Settings modal
     document.getElementById('settings-btn').addEventListener('click', () => {
         openSettingsModal();
@@ -5987,6 +5993,18 @@ async function refreshProviderModels(provider) {
     } finally {
         btn.disabled = false;
         btn.classList.remove('loading');
+    }
+}
+
+// News fetching + rendering live in news.js (shared with news.html).
+// Here we only show the unread-badge on the topbar button.
+async function initNewsBadge() {
+    const badge = document.getElementById('news-badge');
+    if (!badge) return;
+    const md = await loadNewsMarkdown();
+    if (!md) return;
+    if (localStorage.getItem('newsLastSeen') !== newsFingerprint(md)) {
+        badge.hidden = false;
     }
 }
 
